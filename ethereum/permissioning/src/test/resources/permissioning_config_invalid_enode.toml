@@ -1,0 +1,4 @@
+# Permissioning TOML file
+
+accounts-allowlist=["0x0000000000000000000000000000000000000009"]
+nodes-allowlist=["enode://bob@192.168.0.9:4567"]

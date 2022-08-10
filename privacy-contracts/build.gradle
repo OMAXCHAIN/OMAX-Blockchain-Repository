@@ -1,0 +1,10 @@
+
+
+jar { enabled = true }
+dependencies {
+  implementation 'org.apache.tuweni:tuweni-bytes'
+  implementation 'org.apache.tuweni:tuweni-io'
+  implementation 'org.apache.tuweni:tuweni-toml'
+  implementation 'org.web3j:abi'
+  implementation 'org.web3j:besu'
+}

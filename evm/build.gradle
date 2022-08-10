@@ -1,0 +1,51 @@
+
+
+apply plugin: 'java-library'
+apply plugin: 'idea'
+
+jar {
+  archiveBaseName = 'besu-evm'
+  manifest {
+    attributes(
+      'Specification-Title': archiveBaseName,
+      'Specification-Version': project.version,
+      'Implementation-Title': archiveBaseName,
+      'Implementation-Version': calculateVersion()
+      )
+  }
+}
+
+dependencies {
+  api 'org.slf4j:slf4j-api'
+
+  implementation project(':crypto')
+  implementation project(':datatypes')
+  implementation project(':ethereum:rlp')
+
+  compileOnly 'com.fasterxml.jackson.core:jackson-databind'
+
+  implementation 'org.apache.tuweni:tuweni-bytes'
+  implementation 'org.hyperledger.besu:bls12-381'
+  implementation 'net.java.dev.jna:jna'
+  implementation 'com.github.ben-manes.caffeine:caffeine'
+
+  testImplementation 'info.picocli:picocli'
+  testImplementation 'junit:junit'
+  testImplementation 'org.assertj:assertj-core'
+  testImplementation 'org.junit.jupiter:junit-jupiter'
+  testImplementation 'org.mockito:mockito-core'
+
+  testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      groupId 'org.hyperledger.besu'
+      pom {
+        name = 'Besu EVM'
+        description = 'EVM Engine component'
+      }
+    }
+  }
+}

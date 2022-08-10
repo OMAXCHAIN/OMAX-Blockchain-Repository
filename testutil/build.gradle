@@ -1,0 +1,35 @@
+
+
+apply plugin: 'java-library'
+
+jar {
+  archiveBaseName = 'besu-util-test'
+  manifest {
+    attributes(
+      'Specification-Title': archiveBaseName,
+      'Specification-Version': project.version,
+      'Implementation-Title': archiveBaseName,
+      'Implementation-Version': calculateVersion()
+      )
+  }
+}
+
+dependencies {
+  implementation project(':plugin-api')
+  implementation project(':util')
+
+  implementation 'com.fasterxml.jackson.core:jackson-databind'
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+  implementation 'com.google.guava:guava'
+  implementation 'com.squareup.okhttp3:okhttp'
+  implementation 'io.vertx:vertx-core'
+  implementation 'junit:junit'
+  implementation 'org.apache.tuweni:tuweni-bytes'
+  implementation 'org.apache.tuweni:tuweni-io'
+  implementation 'org.apache.tuweni:tuweni-toml'
+  implementation 'org.assertj:assertj-core'
+  implementation 'org.mockito:mockito-core'
+  implementation 'org.web3j:core'
+
+  implementation 'org.testcontainers:testcontainers'
+}

@@ -1,0 +1,112 @@
+/*
+ * Copyright 2019 ConsenSys AG.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
+plugins {
+  id 'org.web3j' version '4.8.9'
+  id 'org.web3j.solidity' version '0.3.5'
+}
+
+web3j { generatedPackageName = 'org.hyperledger.besu.tests.web3j.generated' }
+
+sourceSets.main.solidity.srcDirs = ["$projectDir/contracts"]
+
+solidity { resolvePackages = false }
+
+dependencies {
+  implementation project(':crypto')
+
+  testImplementation project(':acceptance-tests:dsl')
+  testImplementation project(':acceptance-tests:test-plugins')
+  testImplementation project(':besu')
+  testImplementation project(':config')
+  testImplementation project(':consensus:clique')
+  testImplementation project(':datatypes')
+  testImplementation project(':enclave')
+  testImplementation project(':ethereum:api')
+  testImplementation project(':ethereum:core')
+  testImplementation project(path: ':ethereum:core', configuration: 'testSupportArtifacts')
+  testImplementation project(':ethereum:p2p')
+  testImplementation project(':ethereum:permissioning')
+  testImplementation project(':ethereum:rlp')
+  testImplementation project(':metrics:core')
+  testImplementation project(':plugin-api')
+  testImplementation project(':privacy-contracts')
+  testImplementation project(':testutil')
+  testImplementation project(':util')
+
+  testImplementation 'com.github.tomakehurst:wiremock-jre8-standalone'
+  testImplementation 'commons-io:commons-io'
+  testImplementation 'io.grpc:grpc-core'
+  testImplementation 'io.grpc:grpc-netty'
+  testImplementation 'io.grpc:grpc-stub'
+  testImplementation 'io.jaegertracing:jaeger-client'
+  testImplementation 'io.jaegertracing:jaeger-proto'
+  testImplementation 'io.netty:netty-all'
+  testImplementation 'io.opentelemetry.proto:opentelemetry-proto'
+  testImplementation 'io.opentelemetry:opentelemetry-api'
+  testImplementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+  testImplementation 'io.opentelemetry:opentelemetry-sdk'
+  testImplementation 'io.opentelemetry:opentelemetry-sdk-trace'
+  testImplementation 'io.opentracing.contrib:opentracing-okhttp3'
+  testImplementation 'io.opentracing:opentracing-api'
+  testImplementation 'io.opentracing:opentracing-util'
+  testImplementation 'io.vertx:vertx-core'
+  testImplementation 'junit:junit'
+  testImplementation 'org.apache.commons:commons-compress'
+  testImplementation 'org.apache.logging.log4j:log4j-core'
+  testImplementation 'org.apache.tuweni:tuweni-crypto'
+  testImplementation 'org.assertj:assertj-core'
+  testImplementation 'org.awaitility:awaitility'
+  testImplementation 'org.junit.jupiter:junit-jupiter'
+  testImplementation 'org.testcontainers:testcontainers'
+  testImplementation 'org.web3j:abi'
+  testImplementation 'org.web3j:besu'
+  testImplementation 'org.web3j:core'
+  constraints {
+    implementation('jnr-posix:3.1.15') { because '3.0.47 from web3j has issues' }
+  }
+
+  testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+}
+
+test.enabled = false
+
+sourceSets {
+  test { resources { srcDirs "${rootDir}/acceptance-tests/test-plugins/build/libs" } }
+}
+
+processTestResources.dependsOn(':acceptance-tests:test-plugins:testPluginsJar')
+
+task acceptanceTest(type: Test) {
+  inputs.property "integration.date", LocalTime.now() // so it runs at every invocation
+
+  dependsOn(rootProject.installDist)
+  setSystemProperties(test.getSystemProperties())
+  systemProperty 'acctests.runBesuAsProcess', 'true'
+  systemProperty 'java.security.properties', "${buildDir}/resources/test/acceptanceTesting.security"
+  mustRunAfter rootProject.subprojects*.test
+  description = 'Runs Besu acceptance tests.'
+  group = 'verification'
+
+  jvmArgs "-XX:ErrorFile=${buildDir}/jvmErrorLogs/java_err_pid%p.log"
+
+  testLogging {
+    exceptionFormat = 'full'
+    showStackTraces = true
+    showStandardStreams = Boolean.getBoolean('acctests.showStandardStreams')
+    showExceptions = true
+    showCauses = true
+  }
+
+  doFirst { mkdir "${buildDir}/jvmErrorLogs" }
+}

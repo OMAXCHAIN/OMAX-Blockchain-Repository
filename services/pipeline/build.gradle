@@ -1,0 +1,34 @@
+
+
+apply plugin: 'java-library'
+
+jar {
+  archiveBaseName = 'besu-pipeline'
+  manifest {
+    attributes(
+      'Specification-Title': archiveBaseName,
+      'Specification-Version': project.version,
+      'Implementation-Title': archiveBaseName,
+      'Implementation-Version': calculateVersion()
+      )
+  }
+}
+
+dependencies {
+  api project(':util')
+  api 'org.slf4j:slf4j-api'
+
+  implementation project(':metrics:core')
+  implementation project(':plugin-api')
+
+  implementation 'io.opentelemetry:opentelemetry-api'
+  implementation 'com.google.guava:guava'
+
+  testImplementation 'junit:junit'
+  testImplementation 'org.assertj:assertj-core'
+  testImplementation 'org.awaitility:awaitility'
+  testImplementation 'org.junit.jupiter:junit-jupiter'
+  testImplementation 'org.mockito:mockito-core'
+
+  testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+}

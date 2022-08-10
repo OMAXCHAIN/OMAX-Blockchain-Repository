@@ -1,0 +1,20 @@
+* text eol=lf
+*.jar -text
+*.bat -text
+*.pcap binary
+*.zip binary
+*.tar binary
+*.tar.gz binary
+*.blocks binary
+*.eot binary
+*.svg binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.ttf binary
+*.woff binary
+*.p12 binary
+*.db binary
+*.woff2 binary
+goss-linux-amd64 binary

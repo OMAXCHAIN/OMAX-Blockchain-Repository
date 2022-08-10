@@ -1,0 +1,40 @@
+
+
+apply plugin: 'java-library'
+
+jar {
+  archiveBaseName = 'besu-trie'
+  manifest {
+    attributes(
+      'Specification-Title': archiveBaseName,
+      'Specification-Version': project.version,
+      'Implementation-Title': archiveBaseName,
+      'Implementation-Version': calculateVersion()
+      )
+  }
+}
+
+dependencies {
+  implementation project(':crypto')
+  implementation project(':ethereum:rlp')
+  implementation project(':services:kvstore')
+
+  implementation 'com.google.guava:guava'
+  implementation 'io.opentelemetry:opentelemetry-api'
+  implementation 'org.apache.tuweni:tuweni-bytes'
+  implementation 'org.bouncycastle:bcprov-jdk15on'
+
+  annotationProcessor "org.immutables:value"
+  implementation "org.immutables:value-annotations"
+
+  testImplementation project(':testutil')
+
+  testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+  testImplementation 'junit:junit'
+  testImplementation 'org.apache.tuweni:tuweni-units'
+  testImplementation 'org.assertj:assertj-core'
+  testImplementation 'org.junit.jupiter:junit-jupiter'
+  testImplementation 'org.mockito:mockito-core'
+
+  testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+}

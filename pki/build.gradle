@@ -1,0 +1,38 @@
+
+
+apply plugin: 'java-library'
+
+jar {
+  archiveBaseName = 'besu-pki'
+  manifest {
+    attributes(
+      'Specification-Title': archiveBaseName,
+      'Specification-Version': project.version,
+      'Implementation-Title': archiveBaseName,
+      'Implementation-Version': calculateVersion()
+      )
+  }
+}
+
+dependencies {
+  api 'org.slf4j:slf4j-api'
+
+  implementation 'com.google.guava:guava'
+  implementation 'org.apache.tuweni:tuweni-bytes'
+  implementation 'org.bouncycastle:bcpkix-jdk15on'
+
+  testImplementation 'junit:junit'
+  testImplementation 'org.assertj:assertj-core'
+  testImplementation 'org.junit.jupiter:junit-jupiter'
+  testImplementation 'org.mockito:mockito-core'
+
+  testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+}
+
+configurations { testArtifacts }
+task testJar(type: Jar) {
+  archiveBaseName = "${project.name}-test"
+  from sourceSets.test.output
+}
+
+artifacts { testArtifacts testJar }

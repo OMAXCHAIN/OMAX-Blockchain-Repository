@@ -1,0 +1,37 @@
+
+
+apply plugin: 'java-library'
+
+jar {
+  archiveBaseName = 'besu-nat'
+  manifest {
+    attributes(
+      'Specification-Title': archiveBaseName,
+      'Specification-Version': project.version,
+      'Implementation-Title': archiveBaseName,
+      'Implementation-Version': calculateVersion()
+      )
+  }
+}
+
+dependencies {
+  api 'org.slf4j:slf4j-api'
+
+  implementation 'com.google.guava:guava'
+  implementation 'com.squareup.okhttp3:okhttp'
+  implementation 'org.jupnp:org.jupnp'
+  implementation 'org.jupnp:org.jupnp.support'
+  implementation 'io.kubernetes:client-java'
+
+  // test dependencies.
+  testImplementation project(path: ':ethereum:core', configuration: 'testArtifacts')
+  testImplementation project(path: ':ethereum:core', configuration: 'testSupportArtifacts')
+  testImplementation project(':testutil')
+
+  testImplementation 'junit:junit'
+  testImplementation 'org.assertj:assertj-core'
+  testImplementation 'org.junit.jupiter:junit-jupiter'
+  testImplementation 'org.mockito:mockito-core'
+
+  testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+}

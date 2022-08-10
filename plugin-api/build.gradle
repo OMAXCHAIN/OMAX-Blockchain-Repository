@@ -1,0 +1,69 @@
+
+import java.security.MessageDigest
+
+apply plugin: 'java-library'
+jar {
+  archiveBaseName = 'plugin-api'
+  manifest {
+    attributes(
+      'Specification-Title': archiveBaseName,
+      'Specification-Version': project.version,
+      'Implementation-Title': archiveBaseName,
+      'Implementation-Version': calculateVersion()
+      )
+  }
+}
+
+dependencies {
+  api 'org.apache.tuweni:tuweni-bytes'
+  api 'org.apache.tuweni:tuweni-units'
+}
+
+configurations { testArtifacts }
+
+class FileStateChecker extends DefaultTask {
+
+  @Input
+  Set<File> files
+
+  @Input
+  String knownHash
+
+  @TaskAction
+  def CheckState() {
+    def digestor = MessageDigest.getInstance("SHA-256")
+
+    this.files.toSorted(Comparator.comparing({it.canonicalPath})).each {
+      digestor.update(it.readBytes())
+    }
+    def currentHash = digestor.digest().encodeBase64().toString()
+    if (this.knownHash != currentHash) {
+      throw new GradleException("""For the Plugin APIs the checksum of the project did not match what was expected.
+
+If this is a deliberate change where you have thought through backwards compatibility,
+then update "Expected" for "Calculated" in the appropriate build.gradle as the knownHash for this task.
+Expected   : ${this.knownHash}
+Calculated : ${currentHash}
+""")
+    }
+  }
+}
+
+tasks.register('checkAPIChanges', FileStateChecker) {
+  description = "Checks that the API for the Plugin-API project does not change without deliberate thought"
+  files = sourceSets.main.allJava.files
+  knownHash = '04i5t63zL2UxFKrdlfGMMt099SejaywYvtkgpn9jUE0='
+}
+check.dependsOn('checkAPIChanges')
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      groupId 'org.hyperledger.besu'
+      pom {
+        name = 'Besu Plugins Library'
+        description = 'Core Plugins Libraries for Besu'
+      }
+    }
+  }
+}
