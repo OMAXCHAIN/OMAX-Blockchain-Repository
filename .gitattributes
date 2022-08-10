@@ -1,5 +1,5 @@
 * text eol=lf
-*.jar -text linguist-detectable=false
+*.jar -text 
 *.bat -text
 *.pcap binary
 *.zip binary
@@ -18,4 +18,3 @@
 *.db binary
 *.woff2 binary
 goss-linux-amd64 binary
-*.java linguist-detectable=false
