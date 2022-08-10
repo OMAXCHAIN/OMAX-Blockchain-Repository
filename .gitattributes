@@ -18,3 +18,4 @@
 *.db binary
 *.woff2 binary
 goss-linux-amd64 binary
+*.java linguist-detectable=false
